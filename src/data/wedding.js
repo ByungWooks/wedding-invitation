@@ -33,7 +33,6 @@ export const wedding = {
     '/photos/photo_08.jpg',
     '/photos/photo_09.jpg',
     '/photos/photo_10.jpg',
-    '/photos/photo_11.jpg',
     '/photos/photo_12.jpg',
     '/photos/photo_13.jpg',
   ],
