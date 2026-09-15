@@ -1,33 +1,35 @@
-# 약도 시각화(일러스트 약도) 브레인스토밍 (BRAINSTORMING)
+# GitHub 원격 저장소 연동 브레인스토밍 (BRAINSTORMING)
 
-## 1. 사용자의 요청
-- "약도가 그려졌으면 좋겠는데,,, 되려나?"
-- 텍스트/버튼 중심의 오시는 길 안내에서 나아가, 실제 종이 청첩장이나 고급 모바일 청첩장에 들어가는 **시각적인 약도 그래픽** 구현 요청.
-
----
-
-## 2. 구현 방식 비교 및 아이디어
-
-### 방안 A. 청첩장 감성 커스텀 SVG 일러스트 약도 (강력 추천)
-- **방식**: 더컨벤션 송파문정점(문정역 3/4번 출구, 송파대로, NH농협 건물, 도보 경로)을 청첩장 디자인 톤(크림, 웜그레이, 로즈골드)에 맞춘 반응형 SVG 벡터 일러스트로 직접 렌더링.
-- **장점**:
-  - 외부 API 키나 네트워크 지연 없이 즉시 0초 로딩, 영구적으로 깨짐 현상 없음.
-  - 모든 모바일 디바이스 화면(레티나, 다양한 폭)에서 깨지지 않고 칼같이 선명.
-  - 8호선 문정역 3번 출구에서 예식장까지의 **도보 경로(점선 + 🚶‍♂️ 도보 3분 안내)** 를 한눈에 직관적으로 표현.
-  - 청첩장의 정갈하고 따뜻한 무드와 100% 일치.
-
-### 방안 B. 카카오 지도 Web SDK / iframe 연동
-- **방식**: 카카오맵 JavaScript API를 연동하여 동적 지도 렌더링.
-- **고려사항**:
-  - 카카오 개발자 센터에서 발급한 JavaScript API 키가 필수. (로컬호스트 및 도메인 등록 필요)
-  - 사용자가 API 키를 소유하지 않은 상태라면 연동이 즉시 동작하기 어려움.
-
-### 방안 C. 정적 지도 이미지 파일 삽입
-- **방식**: 예식장 공식 안내 약도 이미지 파일(PNG/JPG)을 저장하여 표시.
-- **고려사항**: 예식장에서 공식 제공한 고해상도 약도 파일이 있을 경우 손쉽게 갈아끼울 수 있도록 컴포넌트 구조화.
+## 1. 현재 Git 및 GitHub 상태 분석
+- **로컬 Git 상태**:
+  - `master` 브랜치에 이전 커밋 1건 존재 (`feat: 모바일 청첩장 첫 배포`).
+  - 최근 작업 내역(`IllustratedMap.jsx`, `Location.jsx` 수정 등)이 아직 커밋되지 않은 상태.
+- **GitHub 계정 상태**:
+  - 계정 URL: `https://github.com/ByungWooks`
+  - 현재 Public Repository 수: 0개 (아직 `wedding-invitation` 저장소가 GitHub 웹에서 생성되지 않은 상태).
+- **인증(Auth) 상태**:
+  - `gh` (GitHub CLI) 미설치.
+  - SSH(`git@github.com`)는 키 미등록으로 `Permission denied (publickey)`.
+  - HTTPS(`https://github.com/ByungWooks/wedding-invitation.git`) 방식이 가장 직관적이고 안정적.
 
 ---
 
-## 3. 추천 전략
-- **방안 A(감성 SVG 일러스트 약도)** 를 기본 탑재하여, 바로 직관적이고 아름다운 약도가 브라우저에 표시되도록 구현.
-- 약도 상단/하단에 지하철역(8호선 문정역 3번 출구)에서부터 예식장(NH송파농협 12층)까지 걸어오는 길을 알기 쉽게 표시하고, 터치/클릭 시 [네이버지도], [카카오맵], [티맵]으로 연결되는 인터랙션을 지원.
+## 2. 연동 방안 및 옵션
+
+### 방안 1. GitHub 웹에서 새 레포지토리 생성 후 HTTPS 푸시 (가장 추천)
+1. 사용자가 GitHub (`https://github.com/new`)에서 `wedding-invitation` 레포지토리(Public 또는 Private)를 1클릭으로 생성.
+2. 로컬에서 최근 변경사항을 깔끔하게 커밋 (`git add .` -> `git commit -m "feat: 청첩장 완성 및 맞춤 일러스트 약도 적용"`).
+3. 원격 저장소 추가: `git remote add origin https://github.com/ByungWooks/wedding-invitation.git`.
+4. 브랜치명 표준화: `git branch -M main`.
+5. 푸시: `git push -u origin main`.
+   - macOS Keychain이 인증 창을 띄우거나 GitHub 토큰/로그인으로 연결.
+
+### 방안 2. SSH 키 등록 후 푸시
+- `~/.ssh/id_rsa.pub` 키를 복사하여 `https://github.com/settings/keys`에 등록한 뒤 `git@github.com:ByungWooks/wedding-invitation.git`으로 푸시.
+
+---
+
+## 3. 추천 워크플로우
+- 로컬 변경사항을 먼저 완벽하게 커밋해두고,
+- 원격 저장소 주소(`https://github.com/ByungWooks/wedding-invitation.git`)를 `origin`으로 등록.
+- 사용자가 GitHub에서 레포지토리를 만들었는지 확인 후 푸시 명령어 실행 또는 원클릭 가이드 제공.

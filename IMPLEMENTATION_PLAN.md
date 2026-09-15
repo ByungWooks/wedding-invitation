@@ -1,41 +1,38 @@
-# 약도 시각화(일러스트 약도) 구현 계획서 (IMPLEMENTATION_PLAN)
+# GitHub 원격 저장소 연동 구현 계획서 (IMPLEMENTATION_PLAN)
 
 ## 1. 구현 목표
-더컨벤션 송파문정점 주변의 주요 도로(송파대로), 지하철역(8호선 문정역 3/4번 출구), 주요 랜드마크(NH송파농협 건물, 법조단지, 문정로데오) 및 도보 경로를 모바일 화면에 최적화된 **감성 벡터 일러스트 약도(SVG Map)** 로 직접 제작하여 청첩장 내 '오시는 길' 섹션에 적용합니다.
+현재까지 완성된 모바일 청첩장 코드(웨딩 사진 13장, 신랑 이병욱 ♥ 신부 송현지 정보, 맞춤 일러스트 약도, 계좌/방명록 기능 등)를 사용자의 GitHub 계정 (`ByungWooks/wedding-invitation`)에 안전하게 커밋하고 푸시합니다.
 
 ---
 
-## 2. 세부 구현 단계
+## 2. 세부 진행 단계
 
-### Step 1. 감성 약도 컴포넌트 (`src/components/IllustratedMap.jsx`) 신규 제작
-- **화면 비율**: 모바일 가로폭에 맞춘 4:3 또는 16:10 비율의 반응형 벡터 SVG.
-- **주요 구성 요소**:
-  1. **도로망**:
-     - 송파대로(중앙 메인 도로), 문정로/동남로 교차로
-     - 방면 라벨: `↑ 잠실·가락시장 방면`, `↓ 장지·복정 방면`, `→ 문정로데오`, `← 문정법조타운`
-  2. **지하철역 (8호선 문정역)**:
-     - 8호선 시그니처 핑크 컬러 뱃지와 `문정역` 표기
-     - `3번 출구`, `4번 출구` 상세 표기
-  3. **예식장 건물 하이라이트**:
-     - `더컨벤션 송파문정점` (NH송파농협 신청사 12F)
-     - 랜드마크 하이라이트 박스 및 웨딩 링/하트 핀 아이콘
-  4. **도보 안내 경로**:
-     - 문정역 3번 출구에서 예식장까지의 도보 점선 경로와 `도보 3분 (약 200m)` 안내 말풍선
-  5. **컬러 & 톤앤매너**:
-     - 청첩장 전체 테마와 어우러지는 따뜻한 베이지/크림 및 부드러운 차콜 잉크 톤
+### Step 1. 로컬 Git 정리 및 커밋
+1. `git status` 확인:
+   - `src/components/IllustratedMap.jsx`
+   - `src/components/Location.jsx`
+   - `src/data/wedding.js`
+   - `src/App.jsx`
+   - `index.html`
+   - `BRAINSTORMING.md`, `IMPLEMENTATION_PLAN.md`
+2. Git author 정보 확인 및 필요시 조정:
+   - 현재: `ByungWook-Lee96 <byungwook414@gmail.com>`
+3. 변경사항 스테이징 및 커밋:
+   - `git add .`
+   - `git commit -m "feat: 더컨벤션 송파문정점 맞춤 일러스트 약도 및 청첩장 완성"`
+4. 기본 브랜치명을 최신 표준인 `main`으로 설정:
+   - `git branch -M main`
 
-### Step 2. '오시는 길' 컴포넌트 (`src/components/Location.jsx`) 결합
-- 상단에 새로 제작한 `<IllustratedMap />` 배치
-- 약도 바로 아래에 주소 카드, [주소 복사] 버튼, [네이버지도 / 카카오맵 / 티맵] 바로가기 3종 버튼 유지
-- 대중교통(지하철, 버스, 주차) 상세 안내 블록 유지
+### Step 2. GitHub 원격 저장소(Remote) 설정
+1. 원격 주소 등록:
+   - `git remote add origin https://github.com/ByungWooks/wedding-invitation.git`
+   - (이미 존재할 경우 set-url로 갱신)
 
-### Step 3. 빌드 및 검증
-- [ ] SVG 약도가 모바일 뷰포트에서 왜곡 없이 깔끔하고 선명하게 표시되는가?
-- [ ] 문정역 3번 출구와 더컨벤션 건물의 위치 관계 및 도보 동선이 직관적인가?
-- [ ] 기존 주소 복사 및 지도 앱 연동 버튼이 정상 동작하는가?
-- [ ] `npm run build` 및 `npm run lint` 통과 여부 확인
+### Step 3. GitHub 레포지토리 생성 및 푸시
+1. 사용자가 GitHub 웹(`https://github.com/new`)에서 `wedding-invitation` 레포지토리를 생성했는지 확인.
+2. `git push -u origin main` 실행.
 
 ---
 
 ## 3. 사용자 확인 (User Confirmation)
-- 청첩장 분위기에 어울리는 **맞춤 일러스트 약도(SVG)** 로 제작하여 적용하는 계획에 대해 확인을 구합니다.
+- GitHub에 `wedding-invitation` 이름으로 비어있는 새 저장소를 만드셨는지(또는 만드실 예정인지) 확인 후 즉시 커밋 및 푸시 작업을 진행합니다.

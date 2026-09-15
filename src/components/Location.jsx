@@ -1,5 +1,6 @@
 import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
+import { IllustratedMap } from './IllustratedMap'
 
 export function Location({ onCopied }) {
   const copyAddress = async () => {
@@ -28,8 +29,11 @@ export function Location({ onCopied }) {
     <section className="px-6 py-16">
       <SectionTitle kicker="LOCATION" title="오시는 길" />
 
+      {/* 시각적 약도 (일러스트 맵) */}
+      <IllustratedMap />
+
       {/* 안내 카드 */}
-      <div className="rounded-xl border border-cream-300 bg-white/70 p-6 text-center shadow-sm backdrop-blur-xs">
+      <div className="mt-4 rounded-xl border border-cream-300 bg-white/70 p-6 text-center shadow-sm backdrop-blur-xs">
         <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-cream-200 text-rose-dark">
           <svg
             className="h-5 w-5 fill-current"
