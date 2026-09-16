@@ -33,7 +33,7 @@ export function Cover() {
         <p className="mb-8 text-[11px] tracking-[0.4em] text-rose-dark">
           WEDDING INVITATION
         </p>
-        <h1 className="font-serif text-4xl font-medium leading-relaxed tracking-wide">
+        <h1 className="font-ridi text-4xl font-medium leading-relaxed tracking-wide">
           {wedding.groom}
           <span className="mx-3 text-2xl text-rose">♥</span>
           {wedding.bride}

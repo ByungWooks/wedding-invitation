@@ -21,6 +21,7 @@ export default {
         },
       },
       fontFamily: {
+        ridi: ['"Ridibatang"', '"Noto Serif KR"', 'Georgia', 'serif'],
         serif: ['"Noto Serif KR"', 'Georgia', 'serif'],
         sans: ['"Noto Sans KR"', 'system-ui', 'sans-serif'],
       },
