@@ -1,30 +1,28 @@
-# 약도 뷰어 간소화 및 갤러리 스와이프 구현 계획서 (IMPLEMENTATION_PLAN)
+# 갤러리 모달 완벽한 수직 중앙 정렬 구현 계획서 (IMPLEMENTATION_PLAN)
 
 ## 1. 구현 목표
-- 약도 모달의 불필요한 하단 버튼들을 모두 제거하고 깔끔한 딤드(Dimmed) 배경을 적용하며, 약도 바깥 딤드 영역 터치 시 즉시 원래 화면으로 닫히도록 개선합니다.
-- 갤러리 모달 뷰어에 모바일 좌우 스와이프(Touch Swipe) 제스처를 적용하여 사진을 옆으로 손쉽게 넘겨볼 수 있도록 합니다.
+- 스크린샷에서 확인된 하단 쏠림 현상(상단 여백 190px vs 하단 여백 46px)을 완벽하게 바로잡습니다.
+- 상단 여백과 하단 여백이 1:1로 균등하게 배치되어 사진이 정확한 수직 정중앙에 오도록 수정합니다.
+- 외부 배포 없이 로컬 개발 서버(`http://localhost:5173`)에서만 우선 검증합니다.
 
 ---
 
 ## 2. 세부 구현 단계
 
-### Step 1. 약도 모달 간소화 (`src/components/MapZoomModal.jsx`)
-- 하단 줌 컨트롤 바(`[-]`, `[+]`, `[100%]`) 및 안내 텍스트 일체 제거.
-- 세련된 딤드 배경 스타일(`bg-black/75 backdrop-blur-xs`) 적용.
-- 약도 이미지 바깥의 딤드 영역을 클릭/터치하면 즉시 닫히고 청첩장 본문으로 복귀(`onClose()`).
-- 약도 자체는 더블 탭 확대 및 핀치 줌이 매끄럽게 유지되도록 이벤트 전파 차단(`e.stopPropagation()`).
+### Step 1. 키프레임 애니메이션 CSS 이전 (`src/index.css`)
+- `slideFromLeft`, `slideFromRight` 애니메이션을 `src/index.css`에 등록하여 모달 내부 flex DOM 오염 제거.
 
-### Step 2. 갤러리 모달 스와이프 제스처 구현 (`src/components/Gallery.jsx`)
-- 터치 시작(`onTouchStart`)과 종료(`onTouchEnd`) 좌표를 추적하여 수평 스와이프 판정 (임계치 45px).
-- 왼쪽으로 스와이프 시 ➔ 다음 사진으로 이동.
-- 오른쪽으로 스와이프 시 ➔ 이전 사진으로 이동.
-- 사진 바깥 딤드 영역 터치 시 모달 닫기 유지.
+### Step 2. `GalleryModal` 및 `GalleryPhotoViewer` 레이아웃 정상화 (`src/components/Gallery.jsx`)
+- `GalleryModal` 루트에서 `h-[100dvh]` 제거 ➔ 순수 `fixed inset-0 z-[9999] flex items-center justify-center` 적용.
+- `GalleryPhotoViewer`에서 `h-full w-full py-8` 제거 ➔ `relative flex items-center justify-center p-4`로 변경.
+- 사진 크기: `max-h-[78vh] max-w-[90vw] object-contain`.
+- 화살표 위치: `top-1/2 -translate-y-1/2` (사진의 정중앙과 완벽 일치).
 
-### Step 3. 빌드 및 배포 검증
-- `npm run build` 및 `npm run lint` 통과 확인.
-- Git 푸시 및 Vercel 실시간 배포.
+### Step 3. 빌드, 린트 및 로컬 테스트
+- `npm run lint` 및 `npm run build` 통과 확인.
+- 로컬 `http://localhost:5173`에서 사진의 상하 여백이 1:1로 동일한지 시각적 검증.
 
 ---
 
 ## 3. 사용자 확인 (User Confirmation)
-- 위 약도 뷰어 미니멀화(딤드 영역 클릭 시 닫힘) 및 갤러리 스와이프 지원 계획에 대해 확인을 요청합니다.
+- 위 원인 분석(100dvh 충돌 해결 및 1:1 상하 여백 정렬)과 수정 계획에 대해 확인을 구합니다.

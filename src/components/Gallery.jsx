@@ -1,87 +1,320 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
 
-export function Gallery() {
-  const [activeIndex, setActiveIndex] = useState(null)
-  const activeSrc =
-    activeIndex === null ? null : wedding.gallery[activeIndex]
-
-  const touchStartXRef = useRef(0)
-  const touchStartYRef = useRef(0)
-  const touchDeltaXRef = useRef(0)
+function GalleryPhotoViewer({ activeIndex, src, animClass, onAnimationEnd, onPrev, onNext }) {
+  const [scale, setScale] = useState(1)
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [isInteracting, setIsInteracting] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
   const [isSwiping, setIsSwiping] = useState(false)
 
-  const showPrev = () => {
-    setActiveIndex((prev) =>
-      prev === 0 ? wedding.gallery.length - 1 : prev - 1,
-    )
+  const dragStartRef = useRef({ x: 0, y: 0 })
+  const initialPanRef = useRef({ x: 0, y: 0 })
+  const initialDistanceRef = useRef(null)
+  const initialScaleRef = useRef(1)
+  const lastTapRef = useRef(0)
+
+  // Double tap to toggle zoom between 1x and 2.2x
+  const handleDoubleTap = (e) => {
+    e.stopPropagation()
+    const now = Date.now()
+    if (now - lastTapRef.current < 320) {
+      if (scale > 1.2) {
+        setScale(1)
+        setPosition({ x: 0, y: 0 })
+      } else {
+        setScale(2.2)
+        setPosition({ x: 0, y: 0 })
+      }
+      lastTapRef.current = 0
+    } else {
+      lastTapRef.current = now
+    }
   }
 
-  const showNext = () => {
-    setActiveIndex((prev) =>
-      prev === wedding.gallery.length - 1 ? 0 : prev + 1,
-    )
+  // Touch handlers: pinch zoom when 2 touches; pan or swipe when 1 touch
+  const handleTouchStart = (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      initialDistanceRef.current = Math.hypot(dx, dy)
+      initialScaleRef.current = scale
+      setIsInteracting(true)
+      setIsSwiping(false)
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0]
+      dragStartRef.current = { x: touch.clientX, y: touch.clientY }
+      initialPanRef.current = { ...position }
+
+      if (scale > 1) {
+        setIsInteracting(true)
+        setIsSwiping(false)
+      } else {
+        setIsSwiping(true)
+        setIsInteracting(false)
+      }
+    }
   }
 
-  useEffect(() => {
-    if (activeSrc === null) return undefined
+  const handleTouchMove = (e) => {
+    if (e.touches.length === 2 && initialDistanceRef.current) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.hypot(dx, dy)
+      const ratio = dist / initialDistanceRef.current
+      const newScale = Math.min(Math.max(initialScaleRef.current * ratio, 1), 3.5)
+      setScale(newScale)
+      if (newScale === 1) {
+        setPosition({ x: 0, y: 0 })
+      }
+    } else if (e.touches.length === 1) {
+      const touch = e.touches[0]
+      const dx = touch.clientX - dragStartRef.current.x
+      const dy = touch.clientY - dragStartRef.current.y
 
-    const onKeyDown = (event) => {
-      if (event.key === 'Escape') setActiveIndex(null)
-      if (event.key === 'ArrowLeft') showPrev()
-      if (event.key === 'ArrowRight') showNext()
+      if (scale > 1 && isInteracting) {
+        const maxPanX = (window.innerWidth * (scale - 1)) / 1.6 + 40
+        const maxPanY = (window.innerHeight * (scale - 1)) / 1.6 + 40
+        setPosition({
+          x: Math.min(Math.max(initialPanRef.current.x + dx, -maxPanX), maxPanX),
+          y: Math.min(Math.max(initialPanRef.current.y + dy, -maxPanY), maxPanY),
+        })
+      } else if (scale === 1 && isSwiping) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+          setDragOffset(dx)
+        }
+      }
+    }
+  }
+
+  const handleTouchEnd = (e) => {
+    if (e.touches.length < 2) {
+      initialDistanceRef.current = null
     }
 
+    if (e.touches.length === 0) {
+      setIsInteracting(false)
+
+      if (scale > 1) {
+        if (scale <= 1.05) {
+          setScale(1)
+          setPosition({ x: 0, y: 0 })
+        }
+      } else if (isSwiping) {
+        setIsSwiping(false)
+        const threshold = 45
+        if (dragOffset > threshold) {
+          onPrev()
+        } else if (dragOffset < -threshold) {
+          onNext()
+        }
+        setDragOffset(0)
+      }
+    }
+  }
+
+  // Desktop mouse drag
+  const handleMouseDown = (e) => {
+    if (scale > 1) {
+      dragStartRef.current = { x: e.clientX, y: e.clientY }
+      initialPanRef.current = { ...position }
+      setIsInteracting(true)
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (isInteracting && scale > 1) {
+      const dx = e.clientX - dragStartRef.current.x
+      const dy = e.clientY - dragStartRef.current.y
+      setPosition({
+        x: initialPanRef.current.x + dx,
+        y: initialPanRef.current.y + dy,
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsInteracting(false)
+  }
+
+  const getTransform = () => {
+    if (scale > 1) {
+      return `translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})`
+    }
+    return `translate3d(${dragOffset}px, 0, 0) scale(1)`
+  }
+
+  return (
+    <div
+      className="relative flex items-center justify-center p-4"
+      onClick={(e) => e.stopPropagation()}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <img
+        src={src}
+        alt={`웨딩 사진 ${activeIndex + 1}`}
+        className={`max-h-[78vh] max-w-[90vw] select-none rounded-sm object-contain will-change-transform shadow-2xl ${animClass}`}
+        style={{
+          transform: getTransform(),
+          transition: isInteracting || isSwiping ? 'none' : 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)',
+          cursor: scale > 1 ? (isInteracting ? 'grabbing' : 'grab') : 'zoom-in',
+        }}
+        onClick={handleDoubleTap}
+        onContextMenu={(e) => e.preventDefault()}
+        onDragStart={(e) => e.preventDefault()}
+        onAnimationEnd={onAnimationEnd}
+      />
+    </div>
+  )
+}
+
+function GalleryModal({ activeIndex, onClose, onPrev, onNext, gallery }) {
+  const [animClass, setAnimClass] = useState('')
+  const activeSrc = gallery[activeIndex]
+
+  // Lock body scroll and handle keyboard navigation
+  useEffect(() => {
     document.body.style.overflow = 'hidden'
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft') {
+        setAnimClass('slide-from-left')
+        onPrev()
+      }
+      if (e.key === 'ArrowRight') {
+        setAnimClass('slide-from-right')
+        onNext()
+      }
+    }
     window.addEventListener('keydown', onKeyDown)
     return () => {
       document.body.style.overflow = ''
       window.removeEventListener('keydown', onKeyDown)
     }
-  }, [activeSrc])
+  }, [onClose, onPrev, onNext])
 
-  // Mobile touch swipe handling
-  const handleTouchStart = (e) => {
-    if (e.touches.length === 1) {
-      touchStartXRef.current = e.touches[0].clientX
-      touchStartYRef.current = e.touches[0].clientY
-      touchDeltaXRef.current = 0
-      setIsSwiping(true)
-    }
-  }
+  const handlePrev = useCallback(() => {
+    setAnimClass('slide-from-left')
+    onPrev()
+  }, [onPrev])
 
-  const handleTouchMove = (e) => {
-    if (!isSwiping || e.touches.length !== 1) return
-    const currentX = e.touches[0].clientX
-    const currentY = e.touches[0].clientY
-    const dx = currentX - touchStartXRef.current
-    const dy = currentY - touchStartYRef.current
+  const handleNext = useCallback(() => {
+    setAnimClass('slide-from-right')
+    onNext()
+  }, [onNext])
 
-    // Only swipe horizontally if horizontal motion is dominant
-    if (Math.abs(dx) > Math.abs(dy)) {
-      if (e.cancelable) e.preventDefault()
-      touchDeltaXRef.current = dx
-      setDragOffset(dx)
-    }
-  }
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-xs select-none touch-none overflow-hidden"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="갤러리 확대 보기"
+    >
+      {/* 상단 페이지 번호 카운터 */}
+      <div className="absolute top-5 left-6 z-20 text-sm text-white/80 font-light tracking-widest select-none pointer-events-none">
+        {activeIndex + 1} / {gallery.length}
+      </div>
 
-  const handleTouchEnd = () => {
-    if (!isSwiping) return
-    setIsSwiping(false)
-    const threshold = 45 // swipe distance threshold in px
-    const dx = touchDeltaXRef.current
+      {/* 우측 상단 닫기 버튼 */}
+      <button
+        type="button"
+        className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/90 backdrop-blur-md transition hover:bg-white/20 active:scale-95 focus:outline-none"
+        onClick={(e) => {
+          e.stopPropagation()
+          onClose()
+        }}
+        aria-label="닫기"
+      >
+        <span className="text-2xl font-light leading-none">×</span>
+      </button>
 
-    if (dx < -threshold) {
-      showNext()
-    } else if (dx > threshold) {
-      showPrev()
-    }
-    setDragOffset(0)
-    touchDeltaXRef.current = 0
-  }
+      {/* 중앙 사진 뷰어 (완벽한 수직 중앙 정렬 & key={activeIndex}로 줌/위치 자동 초기화) */}
+      <GalleryPhotoViewer
+        key={activeIndex}
+        activeIndex={activeIndex}
+        src={activeSrc}
+        animClass={animClass}
+        onAnimationEnd={() => setAnimClass('')}
+        onPrev={handlePrev}
+        onNext={handleNext}
+      />
+
+      {/* 왼쪽 이전 사진 화살표 버튼 (완벽한 수직 중앙 정렬 & SVG 아이콘) */}
+      <button
+        type="button"
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white/90 hover:text-white hover:bg-black/60 active:scale-95 transition focus:outline-none backdrop-blur-xs"
+        onClick={(e) => {
+          e.stopPropagation()
+          handlePrev()
+        }}
+        aria-label="이전 사진"
+      >
+        <svg
+          className="h-5 w-5 stroke-current fill-none -translate-x-0.5"
+          viewBox="0 0 24 24"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      {/* 오른쪽 다음 사진 화살표 버튼 (완벽한 수직 중앙 정렬 & SVG 아이콘) */}
+      <button
+        type="button"
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white/90 hover:text-white hover:bg-black/60 active:scale-95 transition focus:outline-none backdrop-blur-xs"
+        onClick={(e) => {
+          e.stopPropagation()
+          handleNext()
+        }}
+        aria-label="다음 사진"
+      >
+        <svg
+          className="h-5 w-5 stroke-current fill-none translate-x-0.5"
+          viewBox="0 0 24 24"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>,
+    document.body
+  )
+}
+
+export function Gallery() {
+  const [activeIndex, setActiveIndex] = useState(null)
+
+  const showPrev = useCallback(() => {
+    setActiveIndex((prev) =>
+      prev === 0 ? wedding.gallery.length - 1 : prev - 1,
+    )
+  }, [])
+
+  const showNext = useCallback(() => {
+    setActiveIndex((prev) =>
+      prev === wedding.gallery.length - 1 ? 0 : prev + 1,
+    )
+  }, [])
+
+  const handleClose = useCallback(() => {
+    setActiveIndex(null)
+  }, [])
 
   return (
     <section className="px-5 py-16">
@@ -106,83 +339,15 @@ export function Gallery() {
         ))}
       </div>
 
-      {/* 사진 확대 뷰어 모달 (스와이프 지원 & 딤드 영역 클릭 시 닫힘) */}
-      {activeSrc
-        ? createPortal(
-            <div
-              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-xs select-none touch-none overflow-hidden"
-              onClick={() => setActiveIndex(null)}
-              onContextMenu={(e) => e.preventDefault()}
-              role="dialog"
-              aria-modal="true"
-              aria-label="갤러리 확대 보기"
-            >
-              {/* 상단 페이지 번호 */}
-              <div className="absolute top-5 left-6 text-sm text-white/80 font-light tracking-widest select-none">
-                {activeIndex + 1} / {wedding.gallery.length}
-              </div>
-
-              {/* 닫기 버튼 */}
-              <button
-                type="button"
-                className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/90 backdrop-blur-md transition hover:bg-white/20 active:scale-95 focus:outline-none"
-                onClick={() => setActiveIndex(null)}
-                aria-label="닫기"
-              >
-                <span className="text-2xl font-light leading-none">×</span>
-              </button>
-
-              {/* 사진 컨테이너 (터치 스와이프 적용) */}
-              <div
-                className="relative flex items-center justify-center max-h-[85vh] max-w-[92vw] overflow-hidden"
-                onClick={(e) => e.stopPropagation()}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                onTouchCancel={handleTouchEnd}
-              >
-                <img
-                  src={activeSrc}
-                  alt="선택한 웨딩 사진"
-                  className="max-h-[85vh] max-w-[92vw] select-none rounded-sm object-contain will-change-transform pointer-events-auto"
-                  style={{
-                    transform: `translateX(${dragOffset}px)`,
-                    transition: isSwiping ? 'none' : 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)',
-                  }}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                />
-              </div>
-
-              {/* 이전 사진 버튼 */}
-              <button
-                type="button"
-                className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/30 text-white/80 hover:text-white hover:bg-black/50 active:scale-95 transition focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  showPrev()
-                }}
-                aria-label="이전 사진"
-              >
-                <span className="text-3xl font-light leading-none">‹</span>
-              </button>
-
-              {/* 다음 사진 버튼 */}
-              <button
-                type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-black/30 text-white/80 hover:text-white hover:bg-black/50 active:scale-95 transition focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  showNext()
-                }}
-                aria-label="다음 사진"
-              >
-                <span className="text-3xl font-light leading-none">›</span>
-              </button>
-            </div>,
-            document.body,
-          )
-        : null}
+      {activeIndex !== null ? (
+        <GalleryModal
+          activeIndex={activeIndex}
+          gallery={wedding.gallery}
+          onClose={handleClose}
+          onPrev={showPrev}
+          onNext={showNext}
+        />
+      ) : null}
     </section>
   )
 }

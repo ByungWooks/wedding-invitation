@@ -32,3 +32,34 @@
     -webkit-user-drag: none !important;
   }
 }
+
+/* 갤러리 모달 방향성 슬라이드 애니메이션 */
+@keyframes slideFromLeft {
+  0% {
+    opacity: 0.5;
+    transform: translate3d(-50px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideFromRight {
+  0% {
+    opacity: 0.5;
+    transform: translate3d(50px, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.slide-from-left {
+  animation: slideFromLeft 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-from-right {
+  animation: slideFromRight 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
