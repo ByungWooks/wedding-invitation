@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="min-h-svh bg-cream-200">
-      <main className="mx-auto min-h-svh max-w-md bg-cream-100 shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
+      <main className="mx-auto min-h-svh max-w-md bg-cream-100 shadow-[0_4px_35px_rgba(60,50,40,0.09)]">
         <Cover />
         <div className="mx-auto h-px w-12 bg-cream-300" />
         <Greeting />
@@ -24,7 +24,7 @@ function App() {
         <div className="mx-auto h-px w-12 bg-cream-300" />
         <Account onCopied={showToast} />
         <footer className="pb-12 pt-8 text-center text-[11px] tracking-widest text-ink-soft">
-          {wedding.groom} & {wedding.bride}
+          {wedding.groom} <span className="mx-1 text-rose text-[10px]">♥</span> {wedding.bride}
         </footer>
       </main>
       <Toast message={toast} onClose={() => setToast('')} />

@@ -7,8 +7,8 @@ export default {
         cream: {
           50: '#ffffff',
           100: '#ffffff',
-          200: '#f8f9fa',
-          300: '#e9ecef',
+          200: '#e4d8c5',
+          300: '#d9cdb9',
         },
         ink: {
           DEFAULT: '#222222',
