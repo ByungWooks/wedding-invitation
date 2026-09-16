@@ -1,39 +1,29 @@
-# 계좌번호 신랑/신부 및 혼주(양가 부모님) 확장 계획서 (IMPLEMENTATION_PLAN)
+# 반지 픽셀아트 QR 코드 생성 계획서 (IMPLEMENTATION_PLAN)
 
 ## 1. 구현 목표
-양가 부모님(아빠, 엄마, 장인어른, 장모님)과 신랑, 신부 총 6명의 계좌를 모두 깔끔하게 표시할 수 있도록 데이터 구조와 UI를 확장하고 Vercel에 배포합니다.
+- 모바일 청첩장 도메인(`https://wedding-invitation-20270116.vercel.app/`)을 인코딩하는 고해상도 QR 코드를 생성합니다.
+- 구글 크롬 QR 스타일과 유사하되, 중앙에 사용자가 전달한 **픽셀아트 다이아몬드 반지**를 고화질로 얹어 제작합니다.
+- 생성된 QR 이미지를 바탕화면과 프로젝트 저장소에 배치하고, QR 인식 테스트(디코딩 검증)를 거친 후 완료합니다.
 
 ---
 
 ## 2. 세부 구현 단계
 
-### Step 1. 데이터 모델 확장 (`src/data/wedding.js`)
-- `relation` 필드를 추가하여 계좌 구분 지원:
-  ```javascript
-  accounts: {
-    groom: [
-      { relation: '신랑', holder: '이병욱', bank: '국민은행', number: '123-456-789012' },
-      { relation: '아버지', holder: '이OO', bank: '신한은행', number: '110-123-456789' },
-      { relation: '어머니', holder: '김OO', bank: '농협은행', number: '356-123-456789' },
-    ],
-    bride: [
-      { relation: '신부', holder: '송현지', bank: '카카오뱅크', number: '3333-12-3456789' },
-      { relation: '아버지', holder: '송OO', bank: '우리은행', number: '1002-123-456789' },
-      { relation: '어머니', holder: '박OO', bank: '하나은행', number: '123-456789-12345' },
-    ],
-  }
-  ```
+### Step 1. 반지 픽셀아트 아이콘 추출 및 정제
+- 레퍼런스 이미지에서 외곽 불필요 영역을 제거하고, 순수 픽셀아트 반지(다이아몬드 + 링) 스프라이트를 추출.
+- 깨끗한 흰색 둥근 배경 패치(Corner radius)와 적절한 패딩을 부여하여 QR 스캔 인식률 극대화.
 
-### Step 2. UI 렌더링 개선 (`src/components/Account.jsx`)
-- `AccountRow`에 `relation` 뱃지(예: `신랑`, `아버지`, `어머니`) 노출.
-- 복사 시 계좌번호만 정확하게 클립보드에 복사되고, "이병욱님의 계좌번호가 복사되었습니다" 또는 "계좌번호가 복사되었습니다" Toast 노출.
-- 카드 디자인을 화이트 톤과 어울리는 정갈한 레이아웃으로 마무리.
+### Step 2. QR 코드 합성 스크립트 작성 및 실행
+- Python `qrcode` 라이브러리의 `ERROR_CORRECT_H` (30% 복원율) 사용.
+- 고해상도(모듈당 20~25px, 전체 약 1000x1000px 이상)로 렌더링.
+- 중앙 정렬하여 반지 아이콘 합성.
 
-### Step 3. 빌드, 린트 및 배포
-- `npm run build` 및 `npm run lint` 통과 확인.
-- Git 커밋 및 `main` 브랜치 푸시 ➔ Vercel 자동 배포.
+### Step 3. 유효성 검증
+- 생성된 QR 이미지 파일을 직접 스캔/디코딩하여 타깃 URL(`https://wedding-invitation-20270116.vercel.app/`)이 정상 검출되는지 테스트.
+- 실제 스마트폰 카메라로도 인식이 원활한지 확인.
 
----
-
-## 3. 사용자 확인 (User Confirmation)
-- 신랑/신부 및 양가 부모님 6인 계좌 체제로 확장하는 계획에 대해 확인을 구합니다.
+### Step 4. 파일 저장 및 깃 푸시
+- 저장 위치:
+  1. `/Users/bottlewook/Desktop/wedding_invitation_qr.png` (사용자 편의용)
+  2. `public/photos/wedding_qr_ring.png` (웹 청첩장 리소스용)
+- Git 커밋 및 Vercel 배포 반영.
