@@ -10,7 +10,7 @@ function AccountRow({ account, onCopied }) {
       } else {
         throw new Error('clipboard unavailable')
       }
-      onCopied('복사되었습니다')
+      onCopied('계좌번호가 복사되었습니다')
     } catch {
       const textarea = document.createElement('textarea')
       textarea.value = account.number
@@ -21,22 +21,29 @@ function AccountRow({ account, onCopied }) {
       textarea.select()
       const ok = document.execCommand('copy')
       textarea.remove()
-      onCopied(ok ? '복사되었습니다' : '복사에 실패했습니다')
+      onCopied(ok ? '계좌번호가 복사되었습니다' : '복사에 실패했습니다')
     }
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 border-t border-gray-100 py-3 first:border-t-0">
-      <div>
-        <p className="text-sm">
+    <div className="flex items-center justify-between gap-3 border-t border-gray-100 py-3.5 first:border-t-0">
+      <div className="space-y-0.5 text-left">
+        <div className="flex items-center gap-1.5">
+          {account.relation ? (
+            <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+              {account.relation}
+            </span>
+          ) : null}
+          <span className="text-sm font-medium text-ink">{account.holder}</span>
+        </div>
+        <p className="text-xs text-ink-muted font-mono tracking-tight">
           {account.bank} {account.number}
         </p>
-        <p className="mt-0.5 text-xs text-ink-muted">예금주 {account.holder}</p>
       </div>
       <button
         type="button"
         onClick={copy}
-        className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-ink-muted transition hover:bg-gray-100"
+        className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-ink-muted transition hover:bg-gray-100 hover:text-ink"
       >
         복사
       </button>

@@ -1,35 +1,39 @@
-# 상단 이름 '리디바탕' 폰트 적용 구현 계획서 (IMPLEMENTATION_PLAN)
+# 계좌번호 신랑/신부 및 혼주(양가 부모님) 확장 계획서 (IMPLEMENTATION_PLAN)
 
 ## 1. 구현 목표
-제공된 '리디바탕(Ridibatang)' 웹폰트를 등록하고, 메인 커버 최상단의 `이병욱 ♥ 송현지` 텍스트에 적용하여 더욱 우아하고 감성적인 타이포그래피를 완성합니다.
+양가 부모님(아빠, 엄마, 장인어른, 장모님)과 신랑, 신부 총 6명의 계좌를 모두 깔끔하게 표시할 수 있도록 데이터 구조와 UI를 확장하고 Vercel에 배포합니다.
 
 ---
 
 ## 2. 세부 구현 단계
 
-### Step 1. `@font-face` 등록 (`src/index.css`)
-- `src/index.css` 최상단에 제공된 `@font-face` 추가:
-  ```css
-  @font-face {
-    font-family: 'Ridibatang';
-    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
-    font-weight: normal;
-    font-display: swap;
+### Step 1. 데이터 모델 확장 (`src/data/wedding.js`)
+- `relation` 필드를 추가하여 계좌 구분 지원:
+  ```javascript
+  accounts: {
+    groom: [
+      { relation: '신랑', holder: '이병욱', bank: '국민은행', number: '123-456-789012' },
+      { relation: '아버지', holder: '이OO', bank: '신한은행', number: '110-123-456789' },
+      { relation: '어머니', holder: '김OO', bank: '농협은행', number: '356-123-456789' },
+    ],
+    bride: [
+      { relation: '신부', holder: '송현지', bank: '카카오뱅크', number: '3333-12-3456789' },
+      { relation: '아버지', holder: '송OO', bank: '우리은행', number: '1002-123-456789' },
+      { relation: '어머니', holder: '박OO', bank: '하나은행', number: '123-456789-12345' },
+    ],
   }
   ```
 
-### Step 2. Tailwind 폰트 패밀리 확장 (`tailwind.config.js`)
-- `theme.extend.fontFamily`:
-  - `ridi: ['"Ridibatang"', '"Noto Serif KR"', 'serif'],`
+### Step 2. UI 렌더링 개선 (`src/components/Account.jsx`)
+- `AccountRow`에 `relation` 뱃지(예: `신랑`, `아버지`, `어머니`) 노출.
+- 복사 시 계좌번호만 정확하게 클립보드에 복사되고, "이병욱님의 계좌번호가 복사되었습니다" 또는 "계좌번호가 복사되었습니다" Toast 노출.
+- 카드 디자인을 화이트 톤과 어울리는 정갈한 레이아웃으로 마무리.
 
-### Step 3. 메인 커버 신랑/신부 이름 서체 변경 (`src/components/Cover.jsx`)
-- `<h1 className="font-ridi text-4xl font-medium leading-relaxed tracking-wide">` 로 수정.
-
-### Step 4. 빌드, 린트 및 배포
+### Step 3. 빌드, 린트 및 배포
 - `npm run build` 및 `npm run lint` 통과 확인.
 - Git 커밋 및 `main` 브랜치 푸시 ➔ Vercel 자동 배포.
 
 ---
 
 ## 3. 사용자 확인 (User Confirmation)
-- 리디바탕 웹폰트 적용 작업을 즉시 진행할지 확인합니다.
+- 신랑/신부 및 양가 부모님 6인 계좌 체제로 확장하는 계획에 대해 확인을 구합니다.
