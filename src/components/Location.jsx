@@ -1,23 +1,10 @@
-import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useState } from 'react'
 import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
+import { MapZoomModal } from './MapZoomModal'
 
 export function Location({ onCopied }) {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false)
-
-  useEffect(() => {
-    if (!isMapModalOpen) return undefined
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') setIsMapModalOpen(false)
-    }
-    document.body.style.overflow = 'hidden'
-    window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [isMapModalOpen])
 
   const copyAddress = async () => {
     const fullAddress = `${wedding.venueAddress} ${wedding.venueAddressDetail || ''}`.trim()
@@ -78,36 +65,13 @@ export function Location({ onCopied }) {
         </button>
       </div>
 
-      {/* 약도 확대 모달 */}
-      {isMapModalOpen
-        ? createPortal(
-            <div
-              className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 p-4 select-none"
-              onClick={() => setIsMapModalOpen(false)}
-              role="dialog"
-              aria-modal="true"
-              aria-label="약도 확대 보기"
-            >
-              <img
-                src={wedding.mapImage || '/photos/official_map.png'}
-                alt="더컨벤션 송파문정 확대 약도"
-                className="max-h-[85vh] max-w-full rounded-lg bg-white object-contain"
-                onClick={(e) => e.stopPropagation()}
-                onContextMenu={(e) => e.preventDefault()}
-                onDragStart={(e) => e.preventDefault()}
-              />
-              <button
-                type="button"
-                className="absolute right-4 top-4 p-2 text-3xl font-light text-white/80 hover:text-white focus:outline-none"
-                onClick={() => setIsMapModalOpen(false)}
-                aria-label="닫기"
-              >
-                ×
-              </button>
-            </div>,
-            document.body,
-          )
-        : null}
+      {/* 약도 스마트 확대 뷰어 모달 */}
+      <MapZoomModal
+        isOpen={isMapModalOpen}
+        onClose={() => setIsMapModalOpen(false)}
+        mapSrc={wedding.mapImage || '/photos/official_map_hd.png'}
+        mapAlt="더컨벤션 송파문정 확대 약도"
+      />
 
       {/* 안내 카드 */}
       <div className="mt-5 rounded-xl border border-gray-100 bg-white p-6 text-center shadow-xs">
