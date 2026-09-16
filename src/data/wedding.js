@@ -11,7 +11,6 @@ export const wedding = {
   kakaoMapUrl: 'https://map.kakao.com/link/search/더컨벤션송파문정점',
   naverMapUrl: 'https://map.naver.com/p/search/더컨벤션송파문정점',
   mapImage: '/photos/official_map.png',
-  tel: '02-6418-5000',
   transport: {
     subway: '8호선 문정역 3번 출구 도보 5분',
     bus: {

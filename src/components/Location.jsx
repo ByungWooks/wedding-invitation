@@ -139,7 +139,7 @@ export function Location({ onCopied }) {
           ) : null}
         </p>
 
-        <div className="mt-3.5 flex items-center justify-center gap-2">
+        <div className="mt-3.5 flex items-center justify-center">
           <button
             type="button"
             onClick={copyAddress}
@@ -157,22 +157,6 @@ export function Location({ onCopied }) {
             </svg>
             주소 복사
           </button>
-
-          {wedding.tel ? (
-            <a
-              href={`tel:${wedding.tel}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3.5 py-1 text-xs text-ink-muted transition hover:bg-gray-100 hover:text-ink"
-            >
-              <svg
-                className="h-3.5 w-3.5 fill-current"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.72 11.72 0 003.68.59 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1 11.72 11.72 0 00.59 3.68 1 1 0 01-.24 1.02l-2.23 2.09z" />
-              </svg>
-              전화 걸기
-            </a>
-          ) : null}
         </div>
       </div>
 
