@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply m-0 bg-cream-100 font-sans text-ink antialiased;
+    @apply m-0 bg-cream-200 font-sans text-ink antialiased;
   }
 
   #root {

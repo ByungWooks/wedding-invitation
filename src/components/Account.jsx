@@ -26,7 +26,7 @@ function AccountRow({ account, onCopied }) {
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 border-t border-cream-200 py-3 first:border-t-0">
+    <div className="flex items-center justify-between gap-3 border-t border-gray-100 py-3 first:border-t-0">
       <div>
         <p className="text-sm">
           {account.bank} {account.number}
@@ -36,7 +36,7 @@ function AccountRow({ account, onCopied }) {
       <button
         type="button"
         onClick={copy}
-        className="shrink-0 rounded-full border border-rose px-3 py-1 text-xs text-rose-dark"
+        className="shrink-0 rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-ink-muted transition hover:bg-gray-100"
       >
         복사
       </button>
@@ -48,7 +48,7 @@ function Accordion({ title, accounts, onCopied }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="overflow-hidden rounded-md border border-cream-300 bg-white/60">
+    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
       <button
         type="button"
         className="flex w-full items-center justify-between px-4 py-3.5 text-sm"
@@ -59,7 +59,7 @@ function Accordion({ title, accounts, onCopied }) {
         <span className="text-ink-soft">{open ? '−' : '+'}</span>
       </button>
       {open ? (
-        <div className="px-4 pb-3">
+        <div className="border-t border-gray-100 bg-gray-50/50 px-4 pb-3">
           {accounts.map((account) => (
             <AccountRow
               key={`${account.bank}-${account.number}`}

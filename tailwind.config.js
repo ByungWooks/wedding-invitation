@@ -5,19 +5,19 @@ export default {
     extend: {
       colors: {
         cream: {
-          50: '#fdfbf7',
-          100: '#f7f1e8',
-          200: '#efe4d4',
-          300: '#e4d3bb',
+          50: '#ffffff',
+          100: '#ffffff',
+          200: '#f8f9fa',
+          300: '#e9ecef',
         },
         ink: {
-          DEFAULT: '#4a4036',
-          muted: '#7a6e63',
-          soft: '#9a8d82',
+          DEFAULT: '#222222',
+          muted: '#555555',
+          soft: '#888888',
         },
         rose: {
-          DEFAULT: '#c4a484',
-          dark: '#a68568',
+          DEFAULT: '#b49b82',
+          dark: '#8c735a',
         },
       },
       fontFamily: {

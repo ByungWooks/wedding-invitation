@@ -46,7 +46,7 @@ export function Location({ onCopied }) {
       <SectionTitle kicker="LOCATION" title="오시는 길" />
 
       {/* 공식 약도 이미지 (클릭 시 확대 모달) */}
-      <div className="relative overflow-hidden rounded-xl border border-cream-300 bg-white shadow-xs">
+      <div className="relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
         <button
           type="button"
           onClick={() => setIsMapModalOpen(true)}
@@ -60,7 +60,7 @@ export function Location({ onCopied }) {
             onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
           />
-          <div className="flex items-center justify-center gap-1.5 border-t border-cream-200 bg-cream-50/80 py-2 text-center text-[11px] text-ink-muted">
+          <div className="flex items-center justify-center gap-1.5 border-t border-gray-100 bg-gray-50/90 py-2 text-center text-[11px] text-ink-muted">
             <svg
               className="h-3.5 w-3.5 fill-none stroke-current"
               viewBox="0 0 24 24"
@@ -110,8 +110,8 @@ export function Location({ onCopied }) {
         : null}
 
       {/* 안내 카드 */}
-      <div className="mt-5 rounded-xl border border-cream-300 bg-white/70 p-6 text-center shadow-xs backdrop-blur-xs">
-        <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-cream-200 text-rose-dark">
+      <div className="mt-5 rounded-xl border border-gray-100 bg-white p-6 text-center shadow-xs">
+        <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-rose-dark">
           <svg
             className="h-5 w-5 fill-current"
             viewBox="0 0 24 24"
@@ -143,7 +143,7 @@ export function Location({ onCopied }) {
           <button
             type="button"
             onClick={copyAddress}
-            className="inline-flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-50 px-3.5 py-1 text-xs text-ink-muted transition hover:bg-cream-100 hover:text-ink"
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3.5 py-1 text-xs text-ink-muted transition hover:bg-gray-100 hover:text-ink"
           >
             <svg
               className="h-3.5 w-3.5 fill-none stroke-current"
@@ -161,7 +161,7 @@ export function Location({ onCopied }) {
           {wedding.tel ? (
             <a
               href={`tel:${wedding.tel}`}
-              className="inline-flex items-center gap-1.5 rounded-full border border-cream-300 bg-cream-50 px-3.5 py-1 text-xs text-ink-muted transition hover:bg-cream-100 hover:text-ink"
+              className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50 px-3.5 py-1 text-xs text-ink-muted transition hover:bg-gray-100 hover:text-ink"
             >
               <svg
                 className="h-3.5 w-3.5 fill-current"
@@ -198,11 +198,11 @@ export function Location({ onCopied }) {
 
       {/* 대중교통 및 주차 상세 안내 */}
       {wedding.transport ? (
-        <div className="mt-8 space-y-4 rounded-xl border border-cream-200 bg-cream-50/80 p-5 text-left text-xs leading-relaxed text-ink-muted">
+        <div className="mt-8 space-y-4 rounded-xl border border-gray-100 bg-gray-50/70 p-5 text-left text-xs leading-relaxed text-ink-muted">
           {/* 지하철 */}
           {wedding.transport.subway ? (
             <div className="flex items-start gap-3">
-              <span className="shrink-0 rounded bg-cream-200 px-2 py-0.5 font-medium text-[11px] text-ink">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
                 지하철
               </span>
               <div className="text-ink-muted">{wedding.transport.subway}</div>
@@ -211,8 +211,8 @@ export function Location({ onCopied }) {
 
           {/* 버스 */}
           {wedding.transport.bus ? (
-            <div className="flex items-start gap-3 border-t border-cream-200/70 pt-3">
-              <span className="shrink-0 rounded bg-cream-200 px-2 py-0.5 font-medium text-[11px] text-ink">
+            <div className="flex items-start gap-3 border-t border-gray-200/60 pt-3">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
                 버스
               </span>
               <div className="space-y-1 text-[11.5px] text-ink-muted">
@@ -256,8 +256,8 @@ export function Location({ onCopied }) {
 
           {/* 자가용 및 주차 */}
           {wedding.transport.car || wedding.transport.parking ? (
-            <div className="flex items-start gap-3 border-t border-cream-200/70 pt-3">
-              <span className="shrink-0 rounded bg-cream-200 px-2 py-0.5 font-medium text-[11px] text-ink">
+            <div className="flex items-start gap-3 border-t border-gray-200/60 pt-3">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
                 자가용
               </span>
               <div className="space-y-1 text-ink-muted">

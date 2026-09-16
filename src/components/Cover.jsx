@@ -3,7 +3,7 @@ import { useCountdown } from '../hooks/useCountdown'
 
 function TimeBox({ value, label }) {
   return (
-    <div className="flex min-w-[58px] flex-col items-center rounded-lg bg-white/70 px-2 py-3 shadow-sm">
+    <div className="flex min-w-[58px] flex-col items-center rounded-lg border border-gray-100 bg-white/90 px-2 py-3 shadow-xs backdrop-blur-xs">
       <span className="font-serif text-2xl tabular-nums text-ink">
         {String(value).padStart(2, '0')}
       </span>
@@ -22,12 +22,12 @@ export function Cover() {
   return (
     <section className="relative flex min-h-[100svh] flex-col items-center justify-center px-6 py-16 text-center">
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-35"
+        className="pointer-events-none absolute inset-0 select-none bg-cover bg-center opacity-40"
         style={{
           backgroundImage: `url(${wedding.coverImage || '/photos/photo_10.jpg'})`,
         }}
       />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-cream-100/80 via-cream-100/60 to-cream-100" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/50 to-white" />
 
       <div className="relative">
         <p className="mb-8 text-[11px] tracking-[0.4em] text-rose-dark">

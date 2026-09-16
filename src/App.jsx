@@ -13,7 +13,7 @@ function App() {
 
   return (
     <div className="min-h-svh bg-cream-200">
-      <main className="mx-auto min-h-svh max-w-md bg-cream-100 shadow-[0_0_40px_rgba(74,64,54,0.08)]">
+      <main className="mx-auto min-h-svh max-w-md bg-cream-100 shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
         <Cover />
         <div className="mx-auto h-px w-12 bg-cream-300" />
         <Greeting />
