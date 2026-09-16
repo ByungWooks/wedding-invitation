@@ -1,44 +1,42 @@
-# Supabase 실시간 방명록 DB 연동 브레인스토밍 (BRAINSTORMING)
+# 사용자 피드백 반영 브레인스토밍 (BRAINSTORMING)
 
-## 1. 현재 상태
-- Vercel 배포 완료: `https://wedding-invitation-peach-eight.vercel.app/` 정상 운영 중.
-- 현재 방명록: 로컬 React state로만 작동하여 새로고침 시 데이터 유실.
-- 목표: Supabase 클라우드 PostgreSQL DB와 연동하여 모든 하객의 축하 메시지를 영구 저장하고 실시간으로 반영.
+## 1. 피드백 4가지 분석 및 해결 방안
 
----
+### ① 갤러리 사진 무단 저장 방지 (PC 우클릭 및 모바일 롱탭 방지)
+- **현상**: 스마트폰에서 사진을 길게 누르면 "이미지 저장 / 다운로드" 팝업이 뜨고, PC에서는 우클릭으로 이미지를 저장할 수 있음.
+- **해결 방안**:
+  1. CSS:
+     - `-webkit-touch-callout: none;` (iOS Safari 길게 누르기 메뉴 완전 차단)
+     - `user-select: none; -webkit-user-select: none;` (텍스트/이미지 선택 방지)
+     - `pointer-events: none;` (이미지 자체에 직접 터치 이벤트가 닿지 않도록 하고 상위 클릭 버튼만 동작하게 처리)
+  2. JavaScript 이벤트:
+     - `onContextMenu={(e) => e.preventDefault()}` (마우스 우클릭 및 롱탭 컨텍스트 메뉴 무력화)
+     - `onDragStart={(e) => e.preventDefault()}` (이미지 드래그 앤 드롭 방지)
+  3. 적용 범위: 갤러리 썸네일 그리드, 확대 모달, 메인 커버 등 모든 사진.
 
-## 2. 세부 설계 및 고려사항
+### ② 방명록 섹션 제거 및 DB 제거 확인
+- **질문**: "방명록 없애줘 (이거 없으면 DB 없어도 되는 거지?)"
+- **답변**: **네, 완전히 맞습니다!**
+  - 방명록이 빠지면 청첩장은 100% 정적 사이트(Static HTML/JS/CSS)가 됩니다.
+  - 외부 Supabase DB 의존성이 완전히 사라져 DB 연결 실패, 트래픽 한도, 데이터 유실, 비밀번호 노출 등의 걱정이 **0%**가 되며, Vercel CDN에서 전 세계 초고속으로 안정 작동합니다.
+- **조치**: `App.jsx`에서 `<Guestbook />` 제거 및 구분선 정리.
 
-### A. DB 테이블 스키마 (`guestbook`)
-```sql
-create table guestbook (
-  id uuid default gen_random_uuid() primary key,
-  name text not null,
-  message text not null,
-  created_at timestamptz default now() not null
-);
+### ③ 공식 청첩장 약도 PDF 반영
+- **입력 파일**: `/Users/bottlewook/Downloads/더컨벤션_송파_청첩장_약도.pdf`
+- **반영 내용**:
+  1. **약도 이미지**:
+     - 더컨벤션 공식 약도 그래픽(문정역 3번 출구 도보 동선, 신한/하나은행, 기아자동차, 서울동부지방법원/검찰청, 장지역 4번 출구, NC백화점)을 고해상도로 추출하여 감성적인 둥근 카드 형태로 배치.
+     - 클릭 시 확대해서 선명하게 볼 수 있는 기능 추가.
+  2. **교통편 상세 업데이트 (`src/data/wedding.js`)**:
+     - **지하철**: 8호선 문정역 3번 출구 도보 5분
+     - **버스**:
+       - 일반버스: `30, 31, 100, 331`
+       - 간선버스: `302, 303, 320, 333, 350, 360, 343, 345, 422, N13, N37`
+       - 지선버스: `3322, 3420`
+       - 직행버스: `1009, 1112, 1117, 1650, 500-1, 500-1A, 3302, 4305, G2100, G6009`
+       - 하차 안내: 문정법조타운·건영아파트 정류소에서 하차 후 도보 이동
+     - **자가용**: 네비게이션에 "송파구 송파대로 155" 검색
+     - **예식장 연락처**: 02-6418-5000 (전화 연결 기능)
 
--- RLS (보안 정책): 하객 누구나 읽고 쓸 수 있도록 허용, 변조/삭제는 방지
-alter table guestbook enable row level security;
-create policy "Anyone can read guestbook" on guestbook for select using (true);
-create policy "Anyone can insert guestbook" on guestbook for insert with check (true);
-
--- 실시간 (Realtime) 복제 활성화
-alter publication supabase_realtime add table guestbook;
-```
-
-### B. 클라이언트 연동 (`@supabase/supabase-js`)
-- `@supabase/supabase-js` 라이브러리 설치.
-- `src/lib/supabase.js`:
-  - `import.meta.env.VITE_SUPABASE_URL`
-  - `import.meta.env.VITE_SUPABASE_ANON_KEY`
-  - 환경변수 미설정 시에도 에러로 렌더링이 깨지지 않도록 안전한 fallback 처리.
-- `src/components/Guestbook.jsx`:
-  - 컴포넌트 마운트 시 `supabase.from('guestbook').select('*').order('created_at', { ascending: false })` 로 기존 축하 글 로드.
-  - 새 글 등록 시 `supabase.from('guestbook').insert([{ name, message }])` 호출.
-  - Supabase Realtime 채널(`postgres_changes`) 구독: 다른 하객이 글을 쓰면 새로고침 없이 즉시 화면에 애니메이션과 함께 추가.
-
-### C. 환경 변수 등록 및 자동 배포
-- 로컬 개발 환경: `.env` 파일에 `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` 설정.
-- Vercel 배포 환경: Vercel 대시보드 -> Project Settings -> Environment Variables에 2개 값 등록.
-- GitHub에 커밋 푸시하면 Vercel이 자동으로 최신 코드를 재배포.
+### ④ 티맵 버튼 삭제
+- **조치**: 길찾기 버튼 영역에서 [티맵]을 삭제하고, **[네이버지도]** 와 **[카카오맵]** 2개 버튼으로 시원하게 2열 그리드로 정렬.

@@ -3,7 +3,6 @@ import { Account } from './components/Account'
 import { Cover } from './components/Cover'
 import { Gallery } from './components/Gallery'
 import { Greeting } from './components/Greeting'
-import { Guestbook } from './components/Guestbook'
 import { Location } from './components/Location'
 import { Toast } from './components/Toast'
 import { wedding } from './data/wedding'
@@ -24,9 +23,7 @@ function App() {
         <Location onCopied={showToast} />
         <div className="mx-auto h-px w-12 bg-cream-300" />
         <Account onCopied={showToast} />
-        <div className="mx-auto h-px w-12 bg-cream-300" />
-        <Guestbook />
-        <footer className="pb-12 pt-4 text-center text-[11px] tracking-widest text-ink-soft">
+        <footer className="pb-12 pt-8 text-center text-[11px] tracking-widest text-ink-soft">
           {wedding.groom} & {wedding.bride}
         </footer>
       </main>

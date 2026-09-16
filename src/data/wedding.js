@@ -10,10 +10,19 @@ export const wedding = {
   coverImage: '/photos/photo_10.jpg',
   kakaoMapUrl: 'https://map.kakao.com/link/search/더컨벤션송파문정점',
   naverMapUrl: 'https://map.naver.com/p/search/더컨벤션송파문정점',
-  tmapUrl: 'tmap://search?name=더컨벤션 송파문정점',
+  mapImage: '/photos/official_map.png',
+  tel: '02-6418-5000',
   transport: {
-    subway: '8호선 문정역 3번 또는 4번 출구 (도보 약 3분)',
-    bus: '문정로데오거리입구 정류장 하차 (도보 약 2분)',
+    subway: '8호선 문정역 3번 출구 도보 5분',
+    bus: {
+      general: '30, 31, 100, 331',
+      main: '302, 303, 320, 333, 350, 360, 343, 345, 422, N13, N37',
+      branch: '3322, 3420',
+      direct: '1009, 1112, 1117, 1650, 500-1, 500-1A, 3302, 4305, G2100, G6009',
+      notice: '문정법조타운·건영아파트 정류소에서 하차 후 도보이동 (일반버스)',
+      policy: '대중교통 정책에 따라 변동될 수 있습니다.',
+    },
+    car: '네비게이션에 송파구 송파대로 155 검색',
     parking: 'NH송파농협 신청사 지하 주차장 이용 (하객 2시간 무료)',
   },
   greeting: `서로 다른 길을 걷던 두 사람이

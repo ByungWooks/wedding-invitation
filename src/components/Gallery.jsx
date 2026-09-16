@@ -45,13 +45,16 @@ export function Gallery() {
           <button
             key={src}
             type="button"
-            className="aspect-[3/4] overflow-hidden rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-rose"
+            className="aspect-[3/4] overflow-hidden rounded-sm select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-rose"
             onClick={() => setActiveIndex(index)}
+            onContextMenu={(e) => e.preventDefault()}
           >
             <img
               src={src}
               alt={`웨딩 사진 ${index + 1}`}
-              className="h-full w-full object-cover transition duration-300 hover:scale-105"
+              className="pointer-events-none h-full w-full select-none object-cover transition duration-300 hover:scale-105"
+              onContextMenu={(e) => e.preventDefault()}
+              onDragStart={(e) => e.preventDefault()}
             />
           </button>
         ))}
@@ -62,19 +65,22 @@ export function Gallery() {
             <div
               className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/95 select-none"
               onClick={() => setActiveIndex(null)}
+              onContextMenu={(e) => e.preventDefault()}
               role="dialog"
               aria-modal="true"
               aria-label="갤러리 확대 보기"
             >
-              <div className="absolute top-4 left-6 text-sm text-white/80 font-light tracking-widest">
+              <div className="absolute top-4 left-6 text-sm text-white/80 font-light tracking-widest select-none">
                 {activeIndex + 1} / {wedding.gallery.length}
               </div>
 
               <img
                 src={activeSrc}
                 alt="선택한 웨딩 사진"
-                className="max-h-[85vh] max-w-[92vw] object-contain transition duration-200"
+                className="max-h-[85vh] max-w-[92vw] select-none object-contain transition duration-200"
                 onClick={(event) => event.stopPropagation()}
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
               />
 
               <button
