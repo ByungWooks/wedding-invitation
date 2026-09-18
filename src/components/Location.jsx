@@ -47,7 +47,7 @@ export function Location({ onCopied }) {
             onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
           />
-          <div className="flex items-center justify-center gap-1.5 border-t border-gray-100 bg-gray-50/90 py-2 text-center text-[11px] text-ink-muted">
+          <div className="flex items-center justify-center gap-1.5 border-t border-gray-100 bg-gray-50/90 py-2 text-center text-xs text-ink-muted">
             <svg
               className="h-3.5 w-3.5 fill-none stroke-current"
               viewBox="0 0 24 24"
@@ -146,55 +146,55 @@ export function Location({ onCopied }) {
 
       {/* 대중교통 및 주차 상세 안내 */}
       {wedding.transport ? (
-        <div className="mt-8 space-y-4 rounded-xl border border-gray-100 bg-gray-50/70 p-5 text-left text-xs leading-relaxed text-ink-muted">
+        <div className="mt-8 space-y-4 rounded-xl border border-gray-100 bg-gray-50/70 p-5 text-left text-[13px] leading-relaxed text-ink-muted">
           {/* 지하철 */}
           {wedding.transport.subway ? (
             <div className="flex items-start gap-3">
-              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2.5 py-0.5 font-medium text-xs text-ink">
                 지하철
               </span>
-              <div className="text-ink-muted">{wedding.transport.subway}</div>
+              <div className="text-ink font-medium leading-snug">{wedding.transport.subway}</div>
             </div>
           ) : null}
 
           {/* 버스 */}
           {wedding.transport.bus ? (
             <div className="flex items-start gap-3 border-t border-gray-200/60 pt-3">
-              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2.5 py-0.5 font-medium text-xs text-ink">
                 버스
               </span>
-              <div className="space-y-1 text-[11.5px] text-ink-muted">
+              <div className="space-y-1.5 text-[13px] text-ink-muted leading-relaxed">
                 {wedding.transport.bus.general ? (
                   <p>
-                    <strong className="text-ink">일반버스:</strong>{' '}
+                    <strong className="font-medium text-ink">일반버스:</strong>{' '}
                     {wedding.transport.bus.general}
                   </p>
                 ) : null}
                 {wedding.transport.bus.main ? (
                   <p>
-                    <strong className="text-ink">간선버스:</strong>{' '}
+                    <strong className="font-medium text-ink">간선버스:</strong>{' '}
                     {wedding.transport.bus.main}
                   </p>
                 ) : null}
                 {wedding.transport.bus.branch ? (
                   <p>
-                    <strong className="text-ink">지선버스:</strong>{' '}
+                    <strong className="font-medium text-ink">지선버스:</strong>{' '}
                     {wedding.transport.bus.branch}
                   </p>
                 ) : null}
                 {wedding.transport.bus.direct ? (
                   <p>
-                    <strong className="text-ink">직행버스:</strong>{' '}
+                    <strong className="font-medium text-ink">직행버스:</strong>{' '}
                     {wedding.transport.bus.direct}
                   </p>
                 ) : null}
                 {wedding.transport.bus.notice ? (
-                  <p className="pt-1 text-[11px] text-rose-dark">
+                  <p className="pt-1 text-xs text-rose-dark font-medium">
                     · {wedding.transport.bus.notice}
                   </p>
                 ) : null}
                 {wedding.transport.bus.policy ? (
-                  <p className="text-[10.5px] text-ink-soft">
+                  <p className="text-xs text-ink-soft">
                     · {wedding.transport.bus.policy}
                   </p>
                 ) : null}
@@ -205,15 +205,15 @@ export function Location({ onCopied }) {
           {/* 자가용 및 주차 */}
           {wedding.transport.car || wedding.transport.parking ? (
             <div className="flex items-start gap-3 border-t border-gray-200/60 pt-3">
-              <span className="shrink-0 rounded bg-gray-200/80 px-2 py-0.5 font-medium text-[11px] text-ink">
+              <span className="shrink-0 rounded bg-gray-200/80 px-2.5 py-0.5 font-medium text-xs text-ink">
                 자가용
               </span>
-              <div className="space-y-1 text-ink-muted">
+              <div className="space-y-1 text-[13px] text-ink-muted">
                 {wedding.transport.car ? (
-                  <p>{wedding.transport.car}</p>
+                  <p className="text-ink font-medium">{wedding.transport.car}</p>
                 ) : null}
                 {wedding.transport.parking ? (
-                  <p className="text-[11px] text-ink-soft">
+                  <p className="text-xs text-ink-muted font-medium">
                     · {wedding.transport.parking}
                   </p>
                 ) : null}

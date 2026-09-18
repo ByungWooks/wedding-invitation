@@ -162,7 +162,7 @@ function GalleryPhotoViewer({ activeIndex, src, animClass, onAnimationEnd, onPre
       <img
         src={src}
         alt={`웨딩 사진 ${activeIndex + 1}`}
-        className={`max-h-[78vh] max-w-[90vw] select-none rounded-sm object-contain will-change-transform shadow-2xl ${animClass}`}
+        className={`max-h-[78vh] max-w-[90vw] select-none rounded-sm object-contain will-change-transform shadow-[0_12px_45px_rgba(0,0,0,0.12)] border border-black/5 ${animClass}`}
         style={{
           transform: getTransform(),
           transition: isInteracting || isSwiping ? 'none' : 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)',
@@ -214,21 +214,21 @@ function GalleryModal({ activeIndex, onClose, onPrev, onNext, gallery }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-xs select-none touch-none overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/95 backdrop-blur-md select-none touch-none overflow-hidden"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
       aria-label="갤러리 확대 보기"
     >
       {/* 상단 페이지 번호 카운터 */}
-      <div className="absolute top-5 left-6 z-20 text-sm text-white/80 font-light tracking-widest select-none pointer-events-none">
+      <div className="absolute top-5 left-6 z-20 text-sm text-ink-muted font-medium tracking-widest select-none pointer-events-none">
         {activeIndex + 1} / {gallery.length}
       </div>
 
       {/* 우측 상단 닫기 버튼 */}
       <button
         type="button"
-        className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/90 backdrop-blur-md transition hover:bg-white/20 active:scale-95 focus:outline-none"
+        className="absolute right-5 top-5 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-black/5 text-ink hover:bg-black/10 active:scale-95 transition focus:outline-none"
         onClick={(e) => {
           e.stopPropagation()
           onClose()
@@ -252,7 +252,7 @@ function GalleryModal({ activeIndex, onClose, onPrev, onNext, gallery }) {
       {/* 왼쪽 이전 사진 화살표 버튼 (완벽한 수직 중앙 정렬 & SVG 아이콘) */}
       <button
         type="button"
-        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white/90 hover:text-white hover:bg-black/60 active:scale-95 transition focus:outline-none backdrop-blur-xs"
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-ink shadow-md hover:bg-white hover:text-black active:scale-95 transition focus:outline-none border border-black/5"
         onClick={(e) => {
           e.stopPropagation()
           handlePrev()
@@ -274,7 +274,7 @@ function GalleryModal({ activeIndex, onClose, onPrev, onNext, gallery }) {
       {/* 오른쪽 다음 사진 화살표 버튼 (완벽한 수직 중앙 정렬 & SVG 아이콘) */}
       <button
         type="button"
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white/90 hover:text-white hover:bg-black/60 active:scale-95 transition focus:outline-none backdrop-blur-xs"
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/90 text-ink shadow-md hover:bg-white hover:text-black active:scale-95 transition focus:outline-none border border-black/5"
         onClick={(e) => {
           e.stopPropagation()
           handleNext()
@@ -299,6 +299,7 @@ function GalleryModal({ activeIndex, onClose, onPrev, onNext, gallery }) {
 
 export function Gallery() {
   const [activeIndex, setActiveIndex] = useState(null)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const showPrev = useCallback(() => {
     setActiveIndex((prev) =>
@@ -316,28 +317,75 @@ export function Gallery() {
     setActiveIndex(null)
   }, [])
 
+  const displayedGallery = isExpanded
+    ? wedding.gallery
+    : wedding.gallery.slice(0, 6)
+
   return (
     <section className="px-5 py-16">
       <SectionTitle kicker="GALLERY" title="갤러리" />
       <div className="grid grid-cols-2 gap-2">
-        {wedding.gallery.map((src, index) => (
-          <button
-            key={src}
-            type="button"
-            className="aspect-[3/4] overflow-hidden rounded-sm select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-rose"
-            onClick={() => setActiveIndex(index)}
-            onContextMenu={(e) => e.preventDefault()}
-          >
-            <img
-              src={src}
-              alt={`웨딩 사진 ${index + 1}`}
-              className="pointer-events-none h-full w-full select-none object-cover transition duration-300 hover:scale-105"
+        {displayedGallery.map((src) => {
+          const originalIndex = wedding.gallery.indexOf(src)
+          return (
+            <button
+              key={src}
+              type="button"
+              className="aspect-[3/4] overflow-hidden rounded-sm select-none focus:outline-none focus-visible:ring-2 focus-visible:ring-rose"
+              onClick={() => setActiveIndex(originalIndex)}
               onContextMenu={(e) => e.preventDefault()}
-              onDragStart={(e) => e.preventDefault()}
-            />
-          </button>
-        ))}
+            >
+              <img
+                src={src}
+                alt={`웨딩 사진 ${originalIndex + 1}`}
+                className="pointer-events-none h-full w-full select-none object-cover transition duration-300 hover:scale-105"
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
+              />
+            </button>
+          )
+        })}
       </div>
+
+      {wedding.gallery.length > 6 ? (
+        <div className="mt-5 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-5 py-2 text-xs font-medium text-ink-muted shadow-2xs transition hover:bg-gray-50 hover:text-ink active:scale-98"
+          >
+            {isExpanded ? (
+              <>
+                <span>접기</span>
+                <svg
+                  className="h-3.5 w-3.5 stroke-current fill-none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M18 15l-6-6-6 6" />
+                </svg>
+              </>
+            ) : (
+              <>
+                <span>더보기</span>
+                <svg
+                  className="h-3.5 w-3.5 stroke-current fill-none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </>
+            )}
+          </button>
+        </div>
+      ) : null}
 
       {activeIndex !== null ? (
         <GalleryModal
