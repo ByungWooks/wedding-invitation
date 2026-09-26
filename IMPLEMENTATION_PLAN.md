@@ -1,38 +1,36 @@
-# 갤러리 더보기 기능 및 달력 웨딩 컬러 변경 구현 계획서 (IMPLEMENTATION_PLAN)
+# 갤러리 사진 줌 비활성화 및 지도 확대 유지 구현 계획서 (IMPLEMENTATION_PLAN)
 
 ## 1. 구현 목표
-- [Gallery.jsx](file:///Users/bottlewook/Documents/wedding-invitation/src/components/Gallery.jsx)에서 상위 6장의 사진만 먼저 노출하고, "더보기" 버튼 클릭 시 전체(12장)로 펼쳐지도록 합니다. (펼쳐진 후 "접기" 가능)
-- [Calendar.jsx](file:///Users/bottlewook/Documents/wedding-invitation/src/components/Calendar.jsx)에서 기존의 칙칙한 브라운 톤(`#b49b82`) 대신 결혼식에 어울리는 **로맨틱 더스티 로즈 핑크(`#d86a76`, `#c85a67`)** 컬러를 예식일(16일) 원형 마커, 하트, D-Day 강조 문구에 적용합니다.
-- 변경 작업은 외부 배포 없이 로컬(`http://localhost:5173`)에서만 우선 검증합니다.
+- **약도(지도) 확대 기능은 100% 그대로 유지**합니다. ([MapZoomModal.jsx](file:///Users/bottlewook/Documents/wedding-invitation/src/components/MapZoomModal.jsx) 일체 수정 없음)
+- **갤러리 웨딩 사진 모달**([Gallery.jsx](file:///Users/bottlewook/Documents/wedding-invitation/src/components/Gallery.jsx))에서만 핀치 줌 및 더블 탭 확대 기능을 비활성화하여, 사진 넘김(스와이프/화살표) 전용으로 최적화합니다.
+- 변경 작업은 로컬(`http://localhost:5173`)에서 먼저 검증합니다.
 
 ---
 
 ## 2. 세부 구현 단계
 
-### Step 1. 갤러리 6개 제한 및 "더보기/접기" 토글 버튼 구현 (`src/components/Gallery.jsx`)
-1. `isExpanded` 상태 추가:
-   - `const [isExpanded, setIsExpanded] = useState(false)`
-2. 표시 목록 분기:
-   - `const displayedGallery = isExpanded ? wedding.gallery : wedding.gallery.slice(0, 6)`
-3. 썸네일 클릭 시 `wedding.gallery.indexOf(src)`를 전달하여 12장 모달과의 완벽한 인덱스 동기화.
-4. 그리드 하단에 정갈한 알약형 "더보기/접기" 토글 버튼 추가:
-   - `isExpanded` false: `더보기 ∨`
-   - `isExpanded` true: `접기 ∧`
+### Step 1. `Gallery.jsx`의 사진 줌 기능 제거 및 스와이프 전용 최적화
+1. `GalleryPhotoViewer` 컴포넌트 정리:
+   - `scale`, `position` 상태 및 `handleDoubleTap` 제거
+   - 2-터치 핀치 줌 및 확대 팬(pan) 계산 코드 제거
+   - `cursor: zoom-in` 제거
+2. 순수 좌우 스와이프 로직 유지:
+   - 1-터치 `dragOffset` 계산을 통해 손가락을 뗄 때 좌/우 45px 이상이면 이전/다음 사진으로 부드럽게 전환
+3. 완벽한 중앙 정렬 및 비율 유지:
+   - `max-h-[78vh] max-w-[90vw] object-contain` 유지
 
-### Step 2. 달력 예식일 및 하이라이트 웨딩 컬러 변경 (`src/components/Calendar.jsx`)
-1. 16일 원형 뱃지 배경색: `bg-[#d86a76] text-white shadow-xs`
-2. 16일 위 미니 하트: `text-[#d86a76]`
-3. 서브헤더 "토요일 오전 11시": `text-[#c85a67]`
-4. D-Day 카운트 강조 ("D-Day일"): `text-[#c85a67]`
-5. 커플 하트("신랑 ♥ 신부"): `text-[#d86a76]`
+### Step 2. 지도(약도) 모달 보존 확인
+- `src/components/MapZoomModal.jsx`는 변경하지 않고 그대로 유지
 
 ### Step 3. 빌드 및 린트 검증
-- `npm run lint` 및 `npm run build` 실행하여 무결성 검증
+- `npm run lint` 및 `npm run build` 실행
 
-### Step 4. 로컬 확인 및 안내
-- `http://localhost:5173`에서 시각적 확인 및 인터랙션 테스트 완료 후 사용자 보고
+### Step 4. 로컬 동작 검증
+- 갤러리 사진 확대 비활성화 동작 확인 (핀치/더블탭 시 확대 안 됨)
+- 갤러리 좌우 스와이프 정상 동작 확인
+- 지도 약도 확대 모달 정상 동작(1.45배 즉시 확대, 핀치 줌, 드래그 이동) 보존 확인
 
 ---
 
 ## 3. 사용자 확인 (User Confirmation)
-- 위 계획(갤러리 6개 + 더보기 버튼, 달력 16일 결혼식 로맨틱 로즈 핑크 컬러 적용)에 대해 확인해 주시면 즉시 코드 수정을 진행하겠습니다.
+- 위 계획(지도 확대는 그대로 유지하고 갤러리 사진만 확대 비활성화)에 대해 확인해 주시면 즉시 코드 수정을 진행하겠습니다.

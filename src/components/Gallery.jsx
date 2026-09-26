@@ -4,146 +4,39 @@ import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
 
 function GalleryPhotoViewer({ activeIndex, src, animClass, onAnimationEnd, onPrev, onNext }) {
-  const [scale, setScale] = useState(1)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isInteracting, setIsInteracting] = useState(false)
   const [dragOffset, setDragOffset] = useState(0)
   const [isSwiping, setIsSwiping] = useState(false)
+  const touchStartRef = useRef({ x: 0, y: 0 })
 
-  const dragStartRef = useRef({ x: 0, y: 0 })
-  const initialPanRef = useRef({ x: 0, y: 0 })
-  const initialDistanceRef = useRef(null)
-  const initialScaleRef = useRef(1)
-  const lastTapRef = useRef(0)
-
-  // Double tap to toggle zoom between 1x and 2.2x
-  const handleDoubleTap = (e) => {
-    e.stopPropagation()
-    const now = Date.now()
-    if (now - lastTapRef.current < 320) {
-      if (scale > 1.2) {
-        setScale(1)
-        setPosition({ x: 0, y: 0 })
-      } else {
-        setScale(2.2)
-        setPosition({ x: 0, y: 0 })
-      }
-      lastTapRef.current = 0
-    } else {
-      lastTapRef.current = now
-    }
-  }
-
-  // Touch handlers: pinch zoom when 2 touches; pan or swipe when 1 touch
   const handleTouchStart = (e) => {
-    if (e.touches.length === 2) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX
-      const dy = e.touches[0].clientY - e.touches[1].clientY
-      initialDistanceRef.current = Math.hypot(dx, dy)
-      initialScaleRef.current = scale
-      setIsInteracting(true)
-      setIsSwiping(false)
-    } else if (e.touches.length === 1) {
+    if (e.touches.length === 1) {
       const touch = e.touches[0]
-      dragStartRef.current = { x: touch.clientX, y: touch.clientY }
-      initialPanRef.current = { ...position }
-
-      if (scale > 1) {
-        setIsInteracting(true)
-        setIsSwiping(false)
-      } else {
-        setIsSwiping(true)
-        setIsInteracting(false)
-      }
+      touchStartRef.current = { x: touch.clientX, y: touch.clientY }
+      setIsSwiping(true)
     }
   }
 
   const handleTouchMove = (e) => {
-    if (e.touches.length === 2 && initialDistanceRef.current) {
-      const dx = e.touches[0].clientX - e.touches[1].clientX
-      const dy = e.touches[0].clientY - e.touches[1].clientY
-      const dist = Math.hypot(dx, dy)
-      const ratio = dist / initialDistanceRef.current
-      const newScale = Math.min(Math.max(initialScaleRef.current * ratio, 1), 3.5)
-      setScale(newScale)
-      if (newScale === 1) {
-        setPosition({ x: 0, y: 0 })
+    if (!isSwiping || e.touches.length !== 1) return
+    const touch = e.touches[0]
+    const dx = touch.clientX - touchStartRef.current.x
+    const dy = touch.clientY - touchStartRef.current.y
+    if (Math.abs(dx) > Math.abs(dy)) {
+      setDragOffset(dx)
+    }
+  }
+
+  const handleTouchEnd = () => {
+    if (isSwiping) {
+      setIsSwiping(false)
+      const threshold = 45
+      if (dragOffset > threshold) {
+        onPrev()
+      } else if (dragOffset < -threshold) {
+        onNext()
       }
-    } else if (e.touches.length === 1) {
-      const touch = e.touches[0]
-      const dx = touch.clientX - dragStartRef.current.x
-      const dy = touch.clientY - dragStartRef.current.y
-
-      if (scale > 1 && isInteracting) {
-        const maxPanX = (window.innerWidth * (scale - 1)) / 1.6 + 40
-        const maxPanY = (window.innerHeight * (scale - 1)) / 1.6 + 40
-        setPosition({
-          x: Math.min(Math.max(initialPanRef.current.x + dx, -maxPanX), maxPanX),
-          y: Math.min(Math.max(initialPanRef.current.y + dy, -maxPanY), maxPanY),
-        })
-      } else if (scale === 1 && isSwiping) {
-        if (Math.abs(dx) > Math.abs(dy)) {
-          setDragOffset(dx)
-        }
-      }
+      setDragOffset(0)
     }
-  }
-
-  const handleTouchEnd = (e) => {
-    if (e.touches.length < 2) {
-      initialDistanceRef.current = null
-    }
-
-    if (e.touches.length === 0) {
-      setIsInteracting(false)
-
-      if (scale > 1) {
-        if (scale <= 1.05) {
-          setScale(1)
-          setPosition({ x: 0, y: 0 })
-        }
-      } else if (isSwiping) {
-        setIsSwiping(false)
-        const threshold = 45
-        if (dragOffset > threshold) {
-          onPrev()
-        } else if (dragOffset < -threshold) {
-          onNext()
-        }
-        setDragOffset(0)
-      }
-    }
-  }
-
-  // Desktop mouse drag
-  const handleMouseDown = (e) => {
-    if (scale > 1) {
-      dragStartRef.current = { x: e.clientX, y: e.clientY }
-      initialPanRef.current = { ...position }
-      setIsInteracting(true)
-    }
-  }
-
-  const handleMouseMove = (e) => {
-    if (isInteracting && scale > 1) {
-      const dx = e.clientX - dragStartRef.current.x
-      const dy = e.clientY - dragStartRef.current.y
-      setPosition({
-        x: initialPanRef.current.x + dx,
-        y: initialPanRef.current.y + dy,
-      })
-    }
-  }
-
-  const handleMouseUp = () => {
-    setIsInteracting(false)
-  }
-
-  const getTransform = () => {
-    if (scale > 1) {
-      return `translate3d(${position.x}px, ${position.y}px, 0) scale(${scale})`
-    }
-    return `translate3d(${dragOffset}px, 0, 0) scale(1)`
   }
 
   return (
@@ -154,21 +47,15 @@ function GalleryPhotoViewer({ activeIndex, src, animClass, onAnimationEnd, onPre
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
     >
       <img
         src={src}
         alt={`웨딩 사진 ${activeIndex + 1}`}
         className={`max-h-[78vh] max-w-[90vw] select-none rounded-sm object-contain will-change-transform shadow-[0_12px_45px_rgba(0,0,0,0.12)] border border-black/5 ${animClass}`}
         style={{
-          transform: getTransform(),
-          transition: isInteracting || isSwiping ? 'none' : 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)',
-          cursor: scale > 1 ? (isInteracting ? 'grabbing' : 'grab') : 'zoom-in',
+          transform: `translate3d(${dragOffset}px, 0, 0)`,
+          transition: isSwiping ? 'none' : 'transform 0.25s cubic-bezier(0.2, 0, 0.2, 1)',
         }}
-        onClick={handleDoubleTap}
         onContextMenu={(e) => e.preventDefault()}
         onDragStart={(e) => e.preventDefault()}
         onAnimationEnd={onAnimationEnd}
