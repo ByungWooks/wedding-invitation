@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
 import { MapZoomModal } from './MapZoomModal'
+import { NaverMap } from './NaverMap'
 
 export function Location({ onCopied }) {
+  const [mapTab, setMapTab] = useState('naver')
   const [isMapModalOpen, setIsMapModalOpen] = useState(false)
 
   const copyAddress = async () => {
@@ -32,38 +34,68 @@ export function Location({ onCopied }) {
     <section className="px-6 py-16">
       <SectionTitle kicker="LOCATION" title="오시는 길" />
 
-      {/* 공식 약도 이미지 (클릭 시 확대 모달) */}
-      <div className="relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
+      {/* 지도 / 약도 전환 탭 */}
+      <div className="mb-3.5 flex rounded-xl bg-gray-100/80 p-1">
         <button
           type="button"
-          onClick={() => setIsMapModalOpen(true)}
-          className="group block w-full text-left focus:outline-none"
-          aria-label="약도 크게 보기"
+          onClick={() => setMapTab('naver')}
+          className={`flex-1 rounded-lg py-2 text-xs font-medium transition ${
+            mapTab === 'naver'
+              ? 'bg-white text-ink shadow-xs font-semibold'
+              : 'text-ink-muted hover:text-ink'
+          }`}
         >
-          <img
-            src={wedding.mapImage || '/photos/official_map.png'}
-            alt="더컨벤션 송파문정 약도"
-            className="w-full select-none object-contain transition duration-200 group-hover:opacity-95"
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
-          />
-          <div className="flex items-center justify-center gap-1.5 border-t border-gray-100 bg-gray-50/90 py-2 text-center text-xs text-ink-muted">
-            <svg
-              className="h-3.5 w-3.5 fill-none stroke-current"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              <line x1="11" y1="8" x2="11" y2="14" />
-              <line x1="8" y1="11" x2="14" y2="11" />
-            </svg>
-            탭하여 약도 크게 보기
-          </div>
+          네이버 지도
+        </button>
+        <button
+          type="button"
+          onClick={() => setMapTab('official')}
+          className={`flex-1 rounded-lg py-2 text-xs font-medium transition ${
+            mapTab === 'official'
+              ? 'bg-white text-ink shadow-xs font-semibold'
+              : 'text-ink-muted hover:text-ink'
+          }`}
+        >
+          공식 약도
         </button>
       </div>
+
+      {/* 탭별 지도 노출 */}
+      {mapTab === 'naver' ? (
+        <NaverMap />
+      ) : (
+        <div className="relative overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
+          <button
+            type="button"
+            onClick={() => setIsMapModalOpen(true)}
+            className="group block w-full text-left focus:outline-none"
+            aria-label="약도 크게 보기"
+          >
+            <img
+              src={wedding.mapImage || '/photos/official_map.png'}
+              alt="더컨벤션 송파문정 약도"
+              className="w-full select-none object-contain transition duration-200 group-hover:opacity-95"
+              onContextMenu={(e) => e.preventDefault()}
+              onDragStart={(e) => e.preventDefault()}
+            />
+            <div className="flex items-center justify-center gap-1.5 border-t border-gray-100 bg-gray-50/90 py-2 text-center text-xs text-ink-muted">
+              <svg
+                className="h-3.5 w-3.5 fill-none stroke-current"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <line x1="11" y1="8" x2="11" y2="14" />
+                <line x1="8" y1="11" x2="14" y2="11" />
+              </svg>
+              탭하여 약도 크게 보기
+            </div>
+          </button>
+        </div>
+      )}
 
       {/* 약도 스마트 확대 뷰어 모달 */}
       <MapZoomModal
