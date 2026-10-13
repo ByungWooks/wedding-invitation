@@ -45,13 +45,13 @@ export const wedding = {
   accounts: {
     groom: [
       { relation: '신랑', bank: '국민은행', number: '607302-01-201858', holder: '이병욱' },
-      { relation: '아버지', bank: '국민은행', number: '110-123-456789', holder: '이길수 (아버지)' },
-      { relation: '어머니', bank: '국민은행', number: '356-123-456789', holder: '최한나 (어머니)' },
+      { relation: '아버지', bank: '국민은행', number: '366502-01-154602', holder: '이길수 (아버지)' },
+      { relation: '어머니', bank: '하나은행', number: '429-910150-34307', holder: '최한나 (어머니)' },
     ],
     bride: [
       { relation: '신부', bank: '국민은행', number: '806402-00-013497', holder: '송현지' },
-      { relation: '아버지', bank: '국민은행', number: '1002-123-456789', holder: '송우석 (아버지)' },
-      { relation: '어머니', bank: '우리은행', number: '123-456789-12345', holder: '김옥희 (어머니)' },
+      { relation: '아버지', bank: '국민은행', number: '515502-01-030171', holder: '송우석 (아버지)' },
+      { relation: '어머니', bank: '우리은행', number: '421-08-007054', holder: '김옥희 (어머니)' },
     ],
   },
 }
