@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { wedding } from '../data/wedding'
 import { SectionTitle } from './SectionTitle'
 
@@ -51,31 +50,21 @@ function AccountRow({ account, onCopied }) {
   )
 }
 
-function Accordion({ title, accounts, onCopied }) {
-  const [open, setOpen] = useState(false)
-
+function AccountGroup({ title, accounts, onCopied }) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-xs">
-      <button
-        type="button"
-        className="flex w-full items-center justify-between px-4 py-3.5 text-sm"
-        onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
-      >
+      <div className="px-4 py-3.5 text-sm font-medium text-ink">
         <span>{title}</span>
-        <span className="text-ink-soft">{open ? '−' : '+'}</span>
-      </button>
-      {open ? (
-        <div className="border-t border-gray-100 bg-gray-50/50 px-4 pb-3">
-          {accounts.map((account) => (
-            <AccountRow
-              key={`${account.bank}-${account.number}`}
-              account={account}
-              onCopied={onCopied}
-            />
-          ))}
-        </div>
-      ) : null}
+      </div>
+      <div className="border-t border-gray-100 bg-gray-50/50 px-4 pb-1">
+        {accounts.map((account) => (
+          <AccountRow
+            key={`${account.bank}-${account.number}`}
+            account={account}
+            onCopied={onCopied}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -84,13 +73,13 @@ export function Account({ onCopied }) {
   return (
     <section className="px-6 py-16">
       <SectionTitle kicker="GIFT" title="축하의 마음 전하실 곳" />
-      <div className="space-y-3">
-        <Accordion
+      <div className="space-y-4">
+        <AccountGroup
           title="신랑측"
           accounts={wedding.accounts.groom}
           onCopied={onCopied}
         />
-        <Accordion
+        <AccountGroup
           title="신부측"
           accounts={wedding.accounts.bride}
           onCopied={onCopied}
