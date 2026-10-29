@@ -24,7 +24,7 @@ export function Cover() {
       <div
         className="pointer-events-none absolute inset-0 select-none bg-cover bg-center opacity-40"
         style={{
-          backgroundImage: `url(${wedding.coverImage || '/photos/photo_10.jpg'})`,
+          backgroundImage: `url(${wedding.coverImage || '/photos/photo_13.jpg'})`,
         }}
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/70 via-white/50 to-white" />

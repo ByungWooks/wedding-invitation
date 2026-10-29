@@ -7,7 +7,7 @@ export const wedding = {
   venueDetail: '12층 그랜드볼룸',
   venueAddress: '서울특별시 송파구 송파대로 155',
   venueAddressDetail: 'NH송파농협 신청사 11~13층',
-  coverImage: '/photos/photo_10.jpg',
+  coverImage: '/photos/photo_13.jpg',
   kakaoMapUrl: 'https://map.kakao.com/link/search/더컨벤션송파문정점',
   naverMapUrl: 'https://map.naver.com/p/search/더컨벤션송파문정점',
   mapImage: '/photos/official_map.png',
@@ -39,8 +39,12 @@ export const wedding = {
     '/photos/photo_08.jpg',
     '/photos/photo_09.jpg',
     '/photos/photo_10.jpg',
+    '/photos/photo_11.jpg',
     '/photos/photo_12.jpg',
     '/photos/photo_13.jpg',
+    '/photos/photo_14.jpg',
+    '/photos/photo_15.jpg',
+    '/photos/photo_16.jpg',
   ],
   accounts: {
     groom: [
