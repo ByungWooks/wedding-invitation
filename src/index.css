@@ -31,6 +31,14 @@
     user-select: none !important;
     -webkit-user-drag: none !important;
   }
+
+  /* 모바일 브라우저 전화번호 자동 감지 밑줄 방지 */
+  a[href^="tel"],
+  a[x-apple-data-detectors] {
+    color: inherit !important;
+    text-decoration: none !important;
+    pointer-events: none !important;
+  }
 }
 
 /* 갤러리 모달 방향성 슬라이드 애니메이션 */

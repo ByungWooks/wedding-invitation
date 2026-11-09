@@ -13,7 +13,7 @@ export function Toast({ message, onClose }) {
   return createPortal(
     <div
       role="status"
-      className="fixed bottom-8 left-1/2 z-[110] -translate-x-1/2 rounded-full bg-ink px-5 py-2.5 text-sm text-cream-50 shadow-lg"
+      className="fixed bottom-8 left-1/2 z-[110] w-max -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-5 py-2.5 text-sm text-cream-50 shadow-lg"
     >
       {message}
     </div>,

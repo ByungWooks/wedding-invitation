@@ -36,7 +36,13 @@ function AccountRow({ account, onCopied }) {
           <span className="text-sm font-medium text-ink">{account.holder}</span>
         </div>
         <p className="text-xs text-ink-muted font-mono tracking-tight">
-          {account.bank} {account.number}
+          <span>{account.bank} </span>
+          {account.number.split('-').map((part, index) => (
+            <span key={index}>
+              {index > 0 ? <span>&#8203;-&#8203;</span> : null}
+              {part}
+            </span>
+          ))}
         </p>
       </div>
       <button
